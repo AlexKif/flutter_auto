@@ -8,6 +8,7 @@ class UserProvider extends ChangeNotifier {
 
   void setUserData(User user) {
     this._userData = user;
+    print(user.phone);
     notifyListeners();
   }
 

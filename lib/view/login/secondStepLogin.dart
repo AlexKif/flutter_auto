@@ -1,13 +1,10 @@
 import 'package:auto/api/api.dart';
 import 'package:auto/layouts/signLayout.dart';
-import 'package:auto/models/user/user.dart';
-import 'package:auto/providers/userProvider.dart';
 import 'package:auto/routing/arguments.dart';
 import 'package:auto/routing/routingConstants.dart';
 import 'package:auto/services/storage.dart';
 import 'package:auto/widgets/customTextFormField.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LoginSecondStepView extends StatefulWidget {
   final SignArguments args;
@@ -53,21 +50,17 @@ class _LoginSecondStepState extends State<LoginSecondStepView> {
     });
   }
 
-  void saveToken(token) {
-    secureStorage.writeSecureData('token', token);
+  Future<void> saveToken(token) async {
+    await secureStorage.writeSecureData('token', token);
   }
 
   void goLogin({context, phone, password}) {
     print('$phone, $password');
     login(phone, password).then((res) {
-      print(res.token);
-      saveToken(res.token);
-      Provider.of<UserProvider>(context, listen: false).setUserData(res);
-      // Navigator.pushNamed(context, HomeViewRoute);
-      // Navigator.pushReplacementNamed(context, HomeViewRoute);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          HomeViewRoute, (Route<dynamic> route) => false);
-      // print('Phone: ${value.phone}, Token: ${value.token}');
+      saveToken(res.token).then((_) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            HomeViewRoute, (Route<dynamic> route) => false);
+      });
     }).catchError((onError) {
       print(onError);
     });

@@ -7,8 +7,7 @@ part 'user.g.dart';
 class User {
   String phone;
   String token;
-  List<UserForms> forms;
-  User(this.phone, this.token, this.forms);
+  User(this.phone, this.token);
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

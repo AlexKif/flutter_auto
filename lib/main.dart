@@ -3,6 +3,7 @@ import 'package:auto/providers/userProvider.dart';
 import 'package:auto/routing/routing.dart';
 import 'package:auto/routing/routingConstants.dart';
 import 'package:auto/services/storage.dart';
+import 'package:auto/view/catalog/catalogHome.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,10 @@ class _AppState extends State<App> {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => SignViewModel()),
-          ChangeNotifierProvider(create: (context) => UserProvider()),
+          ChangeNotifierProvider(
+            create: (context) => UserProvider(),
+            child: CatalogHomeView(),
+          ),
         ],
         child: MaterialApp(
             initialRoute:

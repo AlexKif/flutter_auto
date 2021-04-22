@@ -5,6 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AppBarLayout extends StatefulWidget {
+  final String leadingAction;
+  final String title;
+
+  AppBarLayout({this.leadingAction, this.title});
   @override
   State<StatefulWidget> createState() => _AppBarLayoutState();
 }
@@ -76,26 +80,28 @@ class _AppBarLayoutState extends State<AppBarLayout> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-        leading: TextButton(
-          style: ButtonStyle(
-            padding: MaterialStateProperty.all(EdgeInsets.zero),
-          ),
-          child: Icon(
-            Icons.exit_to_app,
-            color: Colors.white,
-            size: 30.0,
-          ),
-          onPressed: () {
-            showMyDialog(context);
-          },
-        ),
+        leading: widget.leadingAction == null
+            ? null
+            : TextButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                ),
+                child: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                  size: 30.0,
+                ),
+                onPressed: () {
+                  showMyDialog(context);
+                },
+              ),
         backgroundColor: Color.fromRGBO(98, 0, 238, 1),
         title: Row(
           children: [
             // SizedBox(
             //   width: 30,
             // ),
-            Text('Мои запросы')
+            Text(widget.title)
           ],
         ));
   }
