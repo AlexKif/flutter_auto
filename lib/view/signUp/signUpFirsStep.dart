@@ -72,6 +72,7 @@ class _SignUpFirstStepViewState extends State<SignUpFirstStepView> {
       textField: CustomTextFormField(
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           controller: phoneController,
+          maxLines: 1,
           fieldType: TextInputType.number,
           focusNode: focusNode,
           onTap: onFieldTap,

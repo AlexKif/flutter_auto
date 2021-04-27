@@ -93,6 +93,7 @@ class _LoginSecondStepState extends State<LoginSecondStepView> {
       successValidation: successValidation,
       textField: CustomTextFormField(
           inputFormatters: [],
+          maxLines: 1,
           controller: passwordController,
           obscureText: true,
           onTap: onFieldTap,

@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:auto/models/sign.dart';
 import 'package:auto/models/user/user.dart';
 import 'package:auto/models/user/userForms.dart';
+import 'package:auto/models/user/userImage.dart';
 import 'package:auto/services/storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 Future<User> login(phone, password) async {
   var response = await http.post(
@@ -75,6 +77,45 @@ Future<List<UserForms>> getForms() async {
     return forms;
   } else {
     print('error');
+    throw Exception(jsonDecode(response.body)['message']);
+  }
+}
+
+Future<UserImage> uploadImage(String path) async {
+  SecureStorage storage = SecureStorage();
+  String token = await storage.readSecureData('token');
+  var uri = Uri.parse('https://api.test.auto.fmc-dev.com/api/image/upload');
+  var request = http.MultipartRequest('POST', uri)
+    ..headers.addAll({'AUTH-TOKEN': token})
+    ..files.add(await http.MultipartFile.fromPath('file', path,
+        contentType: MediaType('multipart', 'form-data')));
+
+  http.Response response = await http.Response.fromStream(await request.send());
+
+  if (response.statusCode == 201) {
+    return UserImage.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception(jsonDecode(response.body)['message']);
+  }
+}
+
+Future<UserForms> createNewTicket(String content, int imageId) async {
+  SecureStorage storage = SecureStorage();
+  String token = await storage.readSecureData('token');
+  var response = await http.post(
+    Uri.https('api.test.auto.fmc-dev.com', 'api/form'),
+    headers: <String, String>{
+      'AUTH-TOKEN': token,
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'content': content,
+      'imageId': imageId,
+    }),
+  );
+  if (response.statusCode == 201) {
+    return UserForms.fromJson(jsonDecode(response.body));
+  } else {
     throw Exception(jsonDecode(response.body)['message']);
   }
 }

@@ -13,6 +13,8 @@ class CustomTextFormField extends StatefulWidget {
   final bool validate;
   final bool obscureText;
   final TextInputType fieldType;
+  final int maxLines;
+  final TextInputAction textInputAction;
 
   CustomTextFormField(
       {this.focusNode,
@@ -24,6 +26,8 @@ class CustomTextFormField extends StatefulWidget {
       this.validate,
       this.validateText,
       this.obscureText,
+      this.maxLines,
+      this.textInputAction,
       this.labelText});
 
   @override
@@ -52,9 +56,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       keyboardType: widget.fieldType,
       inputFormatters: widget.inputFormatters,
       validator: widget.functionValidate,
+      maxLines: widget.maxLines ?? null,
       onTap: () {
         widget.onTap(context);
       },
+      textInputAction: widget.textInputAction,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(18),
         labelStyle: TextStyle(color: styledLabel(widget.focusNode.hasFocus)),

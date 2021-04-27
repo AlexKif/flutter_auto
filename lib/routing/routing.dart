@@ -1,5 +1,6 @@
 import 'package:auto/routing/routingConstants.dart';
 import 'package:auto/view/catalog/catalogHome.dart';
+import 'package:auto/view/catalog/createTicket.dart';
 import 'package:auto/view/catalog/ticket.dart';
 import 'package:auto/view/login/firstStepLogin.dart';
 import 'package:auto/view/login/secondStepLogin.dart';
@@ -24,6 +25,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     case SignUpViewFirstStepRoute:
       return MaterialPageRoute(builder: (context) => SignUpFirstStepView());
+
+    case CreateTicketViewRoute:
+      return MaterialPageRoute(builder: (context) => CreateTicket());
 
     case TicketViewRoute:
       TicketArguments args = settings.arguments as TicketArguments;

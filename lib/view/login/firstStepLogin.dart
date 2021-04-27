@@ -70,6 +70,7 @@ class _LoginFirstStepState extends State<LoginFirstStepView> {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           controller: phoneController,
           fieldType: TextInputType.number,
+          maxLines: 1,
           focusNode: focusNode,
           onTap: onFieldTap,
           functionValidate: validatePhone,

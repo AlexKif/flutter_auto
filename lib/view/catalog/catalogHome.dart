@@ -18,9 +18,13 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
     super.initState();
   }
 
-  void ticketTap(UserForms ticket) {
+  void ticketTap(BuildContext context, UserForms ticket) {
     Navigator.pushNamed(context, TicketViewRoute,
         arguments: TicketArguments(ticket: ticket));
+  }
+
+  void createTicket(BuildContext context) {
+    Navigator.pushNamed(context, CreateTicketViewRoute);
   }
 
   @override
@@ -61,7 +65,7 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
                       },
                       itemBuilder: (context, index) {
                         return ListTile(
-                          onTap: () => ticketTap(snapshot.data[index]),
+                          onTap: () => ticketTap(context, snapshot.data[index]),
                           leading: ConstrainedBox(
                             constraints: BoxConstraints(
                               maxWidth: 100,
@@ -90,9 +94,7 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your onPressed code here!
-        },
+        onPressed: () => createTicket(context),
         child: const Icon(Icons.add),
         backgroundColor: Color.fromRGBO(98, 0, 238, 1),
       ),
