@@ -86,9 +86,8 @@ class _SignLayoutState extends State<SignLayout> {
                     height: 45,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                          backgroundColor: widget.value.isEmpty
-                              ? MaterialStateProperty.all(HexColor('#F2F2F2'))
-                              : MaterialStateProperty.all(HexColor('#6200EE')),
+                          backgroundColor:
+                              MaterialStateProperty.all(HexColor('#6200EE')),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -97,9 +96,7 @@ class _SignLayoutState extends State<SignLayout> {
                       child: Text(
                         'ДАЛЕЕ',
                         style: TextStyle(
-                            color: widget.value.isEmpty
-                                ? HexColor('#001C19')
-                                : Colors.white,
+                            color: Colors.white,
                             fontSize: 14,
                             fontFamily: 'RobotoMedium'),
                       ),

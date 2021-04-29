@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:auto/api/api.dart';
 import 'package:auto/layouts/appBarLayout.dart';
-import 'package:auto/models/user/userImage.dart';
 import 'package:auto/routing/routingConstants.dart';
 import 'package:auto/widgets/customTextFormField.dart';
 import 'package:flutter/cupertino.dart';
@@ -97,7 +96,8 @@ class _CreateTicketState extends State<CreateTicket> {
               _showMyDialog(context, 'Успех!',
                   'Ваш запрос удачно создан. Продавец свяжется с вами в скором времени',
                   () {
-                Navigator.pushNamed(context, HomeViewRoute);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    HomeViewRoute, (Route<dynamic> route) => false);
               }));
         });
       } else {

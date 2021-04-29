@@ -11,10 +11,11 @@ class CatalogHomeView extends StatefulWidget {
 }
 
 class _CatalogHomeViewState extends State<CatalogHomeView> {
-  // Future<String> formsData;
+  Future<List<UserForms>> formsData;
 
   @override
   void initState() {
+    formsData = getForms();
     super.initState();
   }
 
@@ -25,6 +26,12 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
 
   void createTicket(BuildContext context) {
     Navigator.pushNamed(context, CreateTicketViewRoute);
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      formsData = getForms();
+    });
   }
 
   @override
@@ -45,7 +52,7 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
         children: [
           Flexible(
             child: FutureBuilder<List<UserForms>>(
-                future: getForms(),
+                future: formsData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError &&
                       snapshot.connectionState == ConnectionState.none) {
@@ -54,36 +61,40 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
                     return Text('Not show');
                   } else if (snapshot.hasData) {
                     print('show');
-                    return ListView.separated(
-                      itemCount: snapshot.data.length,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: Color.fromRGBO(33, 33, 33, 0.08),
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () => ticketTap(context, snapshot.data[index]),
-                          leading: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: 100,
-                              maxHeight: 56,
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      child: ListView.separated(
+                        itemCount: snapshot.data.length,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            color: Color.fromRGBO(33, 33, 33, 0.08),
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            onTap: () =>
+                                ticketTap(context, snapshot.data[index]),
+                            leading: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: 100,
+                                maxHeight: 56,
+                              ),
+                              child: Image.network(
+                                  snapshot.data[index].image.small,
+                                  fit: BoxFit.cover),
                             ),
-                            child: Image.network(
-                                snapshot.data[index].image.small,
-                                fit: BoxFit.cover),
-                          ),
-                          title: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${snapshot.data[index].content}'),
-                            ],
-                          ),
-                        );
-                      },
+                            title: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('${snapshot.data[index].content}'),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     );
 
                     //     Text('Has data');
