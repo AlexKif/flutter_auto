@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:auto/api/api.dart';
 import 'package:auto/layouts/appBarLayout.dart';
 import 'package:auto/routing/routingConstants.dart';
+import 'package:auto/widgets/customLoader.dart';
 import 'package:auto/widgets/customTextFormField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +53,7 @@ class _CreateTicketState extends State<CreateTicket> {
   FocusNode focusNode = new FocusNode();
   TextEditingController phoneController = TextEditingController();
   bool validate = true;
-
+  bool _load = false;
   File _image;
   final picker = ImagePicker();
 
@@ -89,16 +89,23 @@ class _CreateTicketState extends State<CreateTicket> {
   }
 
   createTicketHandler(BuildContext context) {
-    if (_formKey.currentState.validate()) {
+    if (!_load && _formKey.currentState.validate()) {
       if (_image != null) {
+        setState(() {
+          _load = true;
+        });
         uploadImage(_image.path).then((res) {
-          createNewTicket(phoneController.text, res.id).then((value) =>
-              _showMyDialog(context, 'Успех!',
-                  'Ваш запрос удачно создан. Продавец свяжется с вами в скором времени',
-                  () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    HomeViewRoute, (Route<dynamic> route) => false);
-              }));
+          createNewTicket(phoneController.text, res.id).then((value) {
+            setState(() {
+              _load = false;
+            });
+            _showMyDialog(context, 'Успех!',
+                'Ваш запрос удачно создан. Продавец свяжется с вами в скором времени',
+                () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  HomeViewRoute, (Route<dynamic> route) => false);
+            });
+          });
         });
       } else {
         _showMyDialog(
@@ -115,6 +122,7 @@ class _CreateTicketState extends State<CreateTicket> {
 
   @override
   Widget build(BuildContext context) {
+    Widget loadingIndicator = _load ? customLoader(context) : Container();
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(56),
@@ -122,89 +130,100 @@ class _CreateTicketState extends State<CreateTicket> {
             title: 'Новый запрос',
           ),
         ),
-        body: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints viewportConstraints) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.all(16),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: viewportConstraints.maxHeight - 35,
-                ),
-                child: SizedBox(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTextFormField(
-                                  controller: phoneController,
-                                  focusNode: focusNode,
-                                  onTap: onFieldTap,
-                                  fieldType: TextInputType.multiline,
-                                  textInputAction: TextInputAction.done,
-                                  functionValidate: validatePhone,
-                                  labelText: "Добавить описание",
-                                  validate: validate),
-                              if (_image != null)
-                                Container(
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.only(top: 17),
-                                    child: Image.file(
-                                      _image,
-                                      height: 274,
-                                    )),
-                              TextButton(
-                                onPressed: getImage,
-                                child: Text(
-                                  'Добавить снимок',
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(98, 0, 238, 1),
-                                      fontSize: 17,
-                                      fontFamily: 'RobotoMedium'),
+        body: Stack(
+          children: [
+            LayoutBuilder(
+              builder:
+                  (BuildContext context, BoxConstraints viewportConstraints) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(16),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: viewportConstraints.maxHeight - 35,
+                    ),
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomTextFormField(
+                                      controller: phoneController,
+                                      focusNode: focusNode,
+                                      onTap: onFieldTap,
+                                      fieldType: TextInputType.multiline,
+                                      textInputAction: TextInputAction.done,
+                                      functionValidate: validatePhone,
+                                      labelText: "Добавить описание",
+                                      validate: validate),
+                                  if (_image != null)
+                                    Container(
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.only(top: 17),
+                                        child: Image.file(
+                                          _image,
+                                          height: 274,
+                                        )),
+                                  TextButton(
+                                    onPressed: getImage,
+                                    child: Text(
+                                      'Добавить снимок',
+                                      style: TextStyle(
+                                          color: Color.fromRGBO(98, 0, 238, 1),
+                                          fontSize: 17,
+                                          fontFamily: 'RobotoMedium'),
+                                    ),
+                                  )
+                                ],
+                              )),
+                          Flexible(
+                            child: SizedBox(
+                              height: 48,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(30.0),
+                                    ),
+                                    primary: Color.fromRGBO(98, 0, 238, 1)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add,
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      'СОЗДАТЬ ЗАПРОС',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'RobotoMedium'),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
-                          )),
-                      Flexible(
-                        child: SizedBox(
-                          height: 48,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(30.0),
-                                ),
-                                primary: Color.fromRGBO(98, 0, 238, 1)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  'СОЗДАТЬ ЗАПРОС',
-                                  style: TextStyle(
-                                      fontSize: 14, fontFamily: 'RobotoMedium'),
-                                )
-                              ],
+                                onPressed: () => createTicketHandler(context),
+                              ),
                             ),
-                            onPressed: () => createTicketHandler(context),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          },
+                );
+              },
+            ),
+            Align(
+              child: loadingIndicator,
+              alignment: FractionalOffset.center,
+            ),
+          ],
         ));
   }
 }

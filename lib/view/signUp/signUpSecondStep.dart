@@ -3,6 +3,7 @@ import 'package:auto/layouts/signLayout.dart';
 import 'package:auto/routing/arguments.dart';
 import 'package:auto/routing/routingConstants.dart';
 import 'package:auto/services/storage.dart';
+import 'package:auto/widgets/customLoader.dart';
 import 'package:auto/widgets/customTextFormField.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,7 @@ class _SignUpSecondStepViewState extends State<SignUpSecondStepView> {
   FocusNode focusNode = new FocusNode();
   TextEditingController passwordController = TextEditingController();
   bool validate = true;
+  bool _load = false;
   final SecureStorage secureStorage = SecureStorage();
 
   String validatePassword(String value) {
@@ -99,9 +101,18 @@ class _SignUpSecondStepViewState extends State<SignUpSecondStepView> {
   }
 
   void goRegistration({context, phone, password}) {
-    print('$phone, $password');
+    setState(() {
+      _load = true;
+    });
     registration(phone, password).then((res) {
+      setState(() {
+        _load = false;
+      });
       showMyDialog(context, res.token);
+    }).catchError((_) {
+      setState(() {
+        _load = false;
+      });
     });
   }
 
@@ -114,33 +125,44 @@ class _SignUpSecondStepViewState extends State<SignUpSecondStepView> {
 
   @override
   Widget build(BuildContext context) {
+    Widget loadingIndicator = _load ? customLoader(context) : Container();
+
     void successValidation() {
-      print('${widget.args.phone}, ${passwordController.text}');
-      goRegistration(
-          context: context,
-          phone: widget.args.phone,
-          password: passwordController.text);
+      if (!_load) {
+        goRegistration(
+            context: context,
+            phone: widget.args.phone,
+            password: passwordController.text);
+      }
     }
 
-    return SignLayout(
-      dotIndex: 1,
-      actionTextForUser: 'Введите пароль',
-      focusNode: focusNode,
-      validate: validate,
-      name: 'signUp',
-      value: passwordController.text,
-      onTapSign: onTapSignIn,
-      successValidation: successValidation,
-      textField: CustomTextFormField(
-          inputFormatters: [],
-          maxLines: 1,
-          controller: passwordController,
-          obscureText: true,
-          onTap: onFieldTap,
+    return Stack(
+      children: [
+        SignLayout(
+          dotIndex: 1,
+          actionTextForUser: 'Введите пароль',
           focusNode: focusNode,
-          functionValidate: validatePassword,
-          labelText: "Введите пароль",
-          validate: validate),
+          validate: validate,
+          name: 'signUp',
+          value: passwordController.text,
+          onTapSign: onTapSignIn,
+          successValidation: successValidation,
+          textField: CustomTextFormField(
+              inputFormatters: [],
+              maxLines: 1,
+              controller: passwordController,
+              obscureText: true,
+              onTap: onFieldTap,
+              focusNode: focusNode,
+              functionValidate: validatePassword,
+              labelText: "Введите пароль",
+              validate: validate),
+        ),
+        Align(
+          child: loadingIndicator,
+          alignment: FractionalOffset.center,
+        ),
+      ],
     );
   }
 }

@@ -100,6 +100,7 @@ Future<UserImage> uploadImage(String path) async {
 }
 
 Future<UserForms> createNewTicket(String content, int imageId) async {
+  print('tut');
   SecureStorage storage = SecureStorage();
   String token = await storage.readSecureData('token');
   var response = await http.post(

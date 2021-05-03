@@ -64,16 +64,12 @@ class _AppBarLayoutState extends State<AppBarLayout> {
     String token = await storage.readSecureData('token');
     logout(token).then((value) async {
       await storage.deleteSecureData('token');
-      Navigator.pushNamed(
-        context,
-        LoginViewFirstStepRoute,
-      );
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginViewFirstStepRoute, (Route<dynamic> route) => false);
     }).catchError((onError) async {
       await storage.deleteSecureData('token');
-      Navigator.pushNamed(
-        context,
-        LoginViewFirstStepRoute,
-      );
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          LoginViewFirstStepRoute, (Route<dynamic> route) => false);
     });
   }
 
