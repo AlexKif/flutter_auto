@@ -1,9 +1,11 @@
 import 'package:auto/api/api.dart';
+import 'package:auto/helpers/ColorToHex.dart';
 import 'package:auto/layouts/appBarLayout.dart';
 import 'package:auto/models/user/userForms.dart';
 import 'package:auto/routing/arguments.dart';
 import 'package:auto/routing/routingConstants.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CatalogHomeView extends StatefulWidget {
   @override
@@ -12,6 +14,59 @@ class CatalogHomeView extends StatefulWidget {
 
 class _CatalogHomeViewState extends State<CatalogHomeView> {
   Future<List<UserForms>> formsData;
+
+  List<Widget> skeletonItems = List.generate(
+      7,
+      (index) => Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: Colors.grey,
+                    width: 100,
+                    height: 56,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Flexible(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 8.0,
+                          color: Colors.white,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.0),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 8.0,
+                          color: Colors.white,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 2.0),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 8.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ));
 
   @override
   void initState() {
@@ -99,7 +154,17 @@ class _CatalogHomeViewState extends State<CatalogHomeView> {
 
                     //     Text('Has data');
                   }
-                  return Text('Loading...');
+                  return Container(
+                    padding: EdgeInsets.all(10),
+                    width: double.infinity,
+                    child: Shimmer.fromColors(
+                      baseColor: HexColor('FFD5D3D3'),
+                      highlightColor: HexColor('FFF1F1F1'),
+                      child: Column(
+                        children: skeletonItems,
+                      ),
+                    ),
+                  );
                 }),
           ),
         ],
